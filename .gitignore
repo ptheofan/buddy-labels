@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Local configuration and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Build output
+dist/
+
+# TypeScript / Vite generated files
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+
+# Test and QA artifacts
+.playwright-cli/
+output/
+
+# OS / editor noise
+.DS_Store

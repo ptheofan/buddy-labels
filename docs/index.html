@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Buddy Labels Editor for Bambuddy</title>
+    <meta
+      name="description"
+      content="Design Bambuddy spool labels your way and export UV-printable SVG artwork for EufyMake E1 and 75 x 53.5 mm spool label inserts."
+    />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="./" aria-label="Buddy Labels home">
+          <span class="brand-mark">BL</span>
+          <span>Buddy Labels</span>
+        </a>
+        <nav aria-label="Page navigation">
+          <a href="https://github.com/ptheofan/buddy-labels" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="./setup.html">Setup Guide</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Bambuddy label editor for EufyMake E1</p>
+          <h1>Make your spool labels look the way you want.</h1>
+          <p>
+            Buddy Labels reads your
+            <a href="https://github.com/maziggy/bambuddy" target="_blank" rel="noreferrer">Bambuddy</a>
+            spool inventory, lets you edit the label layout, and exports 75 x 53.5 mm SVG artwork for plastic spool label
+            inserts. The QR code still resolves back to Bambuddy, and the SVG can outline text as paths for EufyMake
+            Studio compatibility.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-link" href="#template">Use the preferred template</a>
+            <a class="secondary-link" href="./buddy-labels.3mf" download>Download the 3MF</a>
+          </div>
+        </div>
+
+        <figure class="label-preview">
+          <img src="./assets/label-preview.svg" alt="Example Buddy Labels SVG export for PLA Tough+ Tough Gray" />
+        </figure>
+      </section>
+
+      <section id="result" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Real-world print</p>
+          <h2>Mounted label on a spool clip</h2>
+          <p>
+            The exported SVG is sized for the printed insert face, with the QR code left readable after UV printing and
+            mounting in the filament clip.
+          </p>
+        </div>
+        <figure class="real-world-photo">
+          <img src="./assets/real-world-photo.jpg" alt="UV-printed Buddy Labels insert mounted on a filament spool clip" />
+        </figure>
+      </section>
+
+      <section id="screenshot" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Actual app</p>
+          <h2>Template editing with live Bambuddy inventory</h2>
+          <p>
+            The app keeps the spool list, editable SVG preview, and template inspector visible together so labels can be
+            adjusted before exporting for EufyMake Studio.
+          </p>
+        </div>
+        <figure class="app-screenshot">
+          <img src="./assets/app-screenshot.png" alt="Buddy Labels app showing inventory, label preview, and template editor" />
+        </figure>
+      </section>
+
+      <section id="download" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Printable insert files</p>
+          <h2>Download the included 3MF</h2>
+        </div>
+        <div class="download-band">
+          <div>
+            <h3>Label inserts and clips</h3>
+            <p>
+              The repository includes a 3MF with the label inserts and filament clips used for this workflow. Print the
+              plastic insert first, then UV print the generated label artwork onto the 75 x 53.5 mm face.
+            </p>
+          </div>
+          <a class="primary-link" href="./buddy-labels.3mf" download>Download buddy-labels.3mf</a>
+        </div>
+      </section>
+
+      <section id="template" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Preferred configuration</p>
+          <h2>Import this template code</h2>
+          <p>
+            This share code contains only label template data. It does not include API keys, Bambuddy credentials, or spool
+            records.
+          </p>
+        </div>
+        <div class="code-panel">
+          <textarea id="preferred-code" readonly spellcheck="false">bl1_H4sIAAAAAAAAE62TP2_bMBDFv4rxOpahRVqMLW5FgSAd0ilFhyADbdESW4lyKCa2Yvi7F6T-xC6CokM0CHeUePzdvccjXiAZQQt5xB5yKQhKSLGggiCHZGmaEKwhE4LcQILRpZh9nl_NEposZnUNAgeJPJ_f3c27rutwItCQD0eE39dO2RwE_iw-QApGrwVBB8kXNCXhZJbRrD88pVwQvELGTzbybSHRls7Y3yDYQeKLM6ois1tdvWhvNorMWmXbq1Y7swXBMyQ-sfhg5P8V3woSG229djiRHtIbX-kBcowP4fhlzyjoIiKmS5pFwgVdDYQfxsfO-Sq99ROdsdvmXq0nwvP8AJn2Y8x6QhHnWkLyhKY9I6cZfxfTQT5g01SN-67qUC3Gt_qAoLWqdZgRgdX-pzZF6fFI0IQ9o5C18jq0OW79Z5mdM9YbW9zrendRNWxwekqeW51PidO1MtbYYlrZmkrV2vqvTa7jD4VpvXY68FSq9T_aGLa-caqINMrronFdWNw1TfUtD31UkOyaYAPJ_18vztkNu7nw0yhSu1d-Uw4KTcng9KhQ73KeRHVYFiz1GjV5U8Y2Vk-yn0_U_5VHcw4XKKOsl35FEzEWZ7H49eX92Tu1-zB3EtSQbIR9cgNlDIIrs6FtvqJM9K3z0HM5Bu82T_AEyU-Ppz-pR-b6mAQAAA</textarea>
+          <div class="code-actions">
+            <button
+              type="button"
+              data-copy-target="preferred-code"
+              data-copy-status="copy-status"
+              data-copy-success="Template code copied."
+            >
+              Copy template code
+            </button>
+            <span id="copy-status" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="usage" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Workflow</p>
+          <h2>How to use Buddy Labels</h2>
+        </div>
+        <ol class="steps">
+          <li>
+            <strong>Run the app.</strong>
+            Use <code>ghcr.io/ptheofan/buddy-labels:latest</code>, build the Docker image locally, or run
+            <code>pnpm run dev</code>, then configure <code>BAMBUDDY_URL</code> and a read-only Bambuddy API key.
+          </li>
+          <li>
+            <strong>Import the template.</strong>
+            Paste the share code into the app's Share code panel, click Import code, then save it as a named template.
+          </li>
+          <li>
+            <strong>Select a spool.</strong>
+            Search by color, material, spool ID, tag UID, tray UID, or tray UUID. The QR target should point to your
+            Bambuddy <code>/inventory?spool=...</code> route.
+          </li>
+          <li>
+            <strong>Export for EufyMake Studio.</strong>
+            Keep Export text as paths enabled before exporting SVG. This avoids SVG text import issues in EufyMake Studio.
+          </li>
+          <li>
+            <strong>UV print the insert.</strong>
+            Import the SVG into EufyMake Studio, keep the artwork at 75 x 53.5 mm, and print onto the plastic insert face.
+          </li>
+        </ol>
+      </section>
+
+      <section id="credits" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">References</p>
+          <h2>Bambuddy and original MakerWorld models</h2>
+          <p>
+            Buddy Labels is built around Bambuddy as the inventory source and community spool label insert and clip
+            models. Please review and respect the model pages and their licensing before remixing or redistributing model
+            files.
+          </p>
+        </div>
+        <div class="reference-grid">
+          <a href="https://github.com/maziggy/bambuddy">
+            <span>Inventory source</span>
+            <strong>Bambuddy</strong>
+          </a>
+          <a href="https://makerworld.com/en/models/1015339-spool-label-id-and-filament-clip-all-in-one#profileId-995489">
+            <span>Original all-in-one clip</span>
+            <strong>Spool Label ID and Filament Clip - All In One</strong>
+          </a>
+          <a href="https://makerworld.com/en/models/1221933-plastic-insert-for-spool-label-id-filament-clip#profileId-1243888">
+            <span>Plastic label insert</span>
+            <strong>Plastic insert for spool label ID filament clip</strong>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Buddy Labels is AGPL-3.0-only.</span>
+      <span>Current Version: v1.0.0</span>
+    </footer>
+
+    <script src="./assets/site.js"></script>
+  </body>
+</html>

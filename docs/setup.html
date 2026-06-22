@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Buddy Labels Setup Guide</title>
+    <meta
+      name="description"
+      content="Run Buddy Labels with Docker Compose, connect it to Bambuddy, and create a least-privilege Bambuddy API key."
+    />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="./" aria-label="Buddy Labels home">
+          <span class="brand-mark">BL</span>
+          <span>Buddy Labels</span>
+        </a>
+        <nav aria-label="Page navigation">
+          <a href="https://github.com/ptheofan/buddy-labels" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="./setup.html" aria-current="page">Setup Guide</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="guide-main">
+      <section class="guide-hero">
+        <p class="eyebrow">Docker setup</p>
+        <h1>Run Buddy Labels next to Bambuddy.</h1>
+        <p>
+          Buddy Labels only needs HTTP access to your Bambuddy API. It reads spool inventory, uses Bambuddy settings to
+          build stable QR edit links, and serves the label editor from the container.
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Docker Compose</p>
+          <h2>Minimal service example</h2>
+          <p>
+            Use the released GHCR image, point <code>BAMBUDDY_URL</code> at your Bambuddy base URL, then open
+            <code>http://localhost:8787</code>.
+          </p>
+        </div>
+        <pre class="code-block"><code>services:
+  buddy-labels:
+    image: ghcr.io/ptheofan/buddy-labels:latest
+    container_name: buddy-labels
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      BAMBUDDY_URL: "https://your-bambuddy.example.com"
+      BAMBUDDY_API_KEY: "bb_your_bambuddy_api_key"
+      APP_GITHUB_REPOSITORY: "ptheofan/buddy-labels"
+      PORT: "8787"</code></pre>
+        <div class="guide-note">
+          <strong>Network note:</strong>
+          use <code>http://bambuddy:8000</code> if Bambuddy is another service on the same Compose network. Use
+          <code>http://host.docker.internal:8000</code> if Bambuddy runs directly on the Docker host.
+        </div>
+        <div class="copy-strip">
+          <button
+            type="button"
+            data-copy-target="agent-instructions"
+            data-copy-status="agent-copy-status"
+            data-copy-success="Agent instructions copied."
+          >
+            Agent instructions
+          </button>
+          <span id="agent-copy-status" class="copy-status" role="status" aria-live="polite"></span>
+        </div>
+        <textarea id="agent-instructions" class="copy-source" readonly tabindex="-1" aria-hidden="true">
+You are adding Buddy Labels to an existing self-hosted setup.
+
+Goal:
+- Add the Buddy Labels container so it can connect to the user's Bambuddy instance and serve the web editor.
+- Do not store real API keys in git. Use the user's secret management pattern, .env file, or deployment secret mechanism.
+
+Service to add:
+services:
+  buddy-labels:
+    image: ghcr.io/ptheofan/buddy-labels:latest
+    container_name: buddy-labels
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      BAMBUDDY_URL: "https://your-bambuddy.example.com"
+      BAMBUDDY_API_KEY: "bb_your_bambuddy_api_key"
+      APP_GITHUB_REPOSITORY: "ptheofan/buddy-labels"
+      PORT: "8787"
+
+Environment rules:
+- BAMBUDDY_URL is the Bambuddy base URL, without /api/v1.
+- If Bambuddy is another service on the same Compose network, use its service name, for example http://bambuddy:8000.
+- If Bambuddy runs on the Docker host, use http://host.docker.internal:8000 where supported.
+- BAMBUDDY_API_KEY is the normal token variable. BAMBUDDY_BEARER_TOKEN is an advanced alternative; do not set both unless the project already expects that.
+- APP_GITHUB_REPOSITORY enables browser version checks. Use ptheofan/buddy-labels unless the app has been forked.
+- PORT defaults to 8787.
+
+Bambuddy API key permissions:
+- Required: inventory:read, so Buddy Labels can read local or Spoolman inventory spools.
+- Required/recommended: settings:read, so Buddy Labels can read Bambuddy external_url and generate QR edit links that resolve correctly.
+- If the Bambuddy UI only exposes broad checkboxes, enable Manage Inventory only when there is no read-only inventory option, and enable the settings/read-status option if /api/config reports a connection or settings warning.
+- Do not grant Manage Queue, Control Printer, Manage Library, cloud access, electricity price update, or other write permissions unless the Bambuddy install bundles read and write permissions together.
+
+Validation:
+- Start the stack and open http://localhost:8787 or the configured reverse-proxy URL.
+- Confirm the app reports Bambuddy connected.
+- Confirm inventory loads.
+- Export one SVG and verify the QR target resolves to {external_url || BAMBUDDY_URL}/inventory?spool={spoolId}.
+        </textarea>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Environment</p>
+          <h2>Variables used by the container</h2>
+        </div>
+        <dl class="env-list">
+          <div>
+            <dt><code>BAMBUDDY_URL</code></dt>
+            <dd>Bambuddy base URL, without <code>/api/v1</code>. Example: <code>https://buddy.example.com</code>.</dd>
+          </div>
+          <div>
+            <dt><code>BAMBUDDY_API_KEY</code></dt>
+            <dd>Bambuddy API key. Buddy Labels sends it as both <code>X-API-Key</code> and bearer auth.</dd>
+          </div>
+          <div>
+            <dt><code>APP_GITHUB_REPOSITORY</code></dt>
+            <dd>Optional <code>owner/repo</code> value used by the browser version check. Default: <code>ptheofan/buddy-labels</code>.</dd>
+          </div>
+          <div>
+            <dt><code>PORT</code></dt>
+            <dd>Optional web server port inside the container. Default: <code>8787</code>.</dd>
+          </div>
+          <div>
+            <dt><code>BAMBUDDY_BEARER_TOKEN</code></dt>
+            <dd>Advanced alternative to <code>BAMBUDDY_API_KEY</code>. Use one token variable, not both.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Bambuddy token</p>
+          <h2>Recommended API key permissions</h2>
+          <p>
+            Grant the smallest set your Bambuddy version exposes. Buddy Labels does not create, update, delete, queue, or
+            control anything in Bambuddy.
+          </p>
+        </div>
+        <div class="permission-grid">
+          <div>
+            <h3>Required</h3>
+            <ul class="check-list">
+              <li><code>inventory:read</code> to read local or Spoolman inventory spools.</li>
+              <li><code>settings:read</code> so Buddy Labels can read Bambuddy <code>external_url</code> for QR links.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>If your UI uses broad checkboxes</h3>
+            <ul class="check-list">
+              <li>Enable <strong>Manage Inventory</strong> only when there is no separate read-only inventory option.</li>
+              <li>Enable the settings/read-status option only if the app shows a Bambuddy connection warning.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Do not grant</h3>
+            <ul class="check-list">
+              <li>Manage Queue, Control Printer, Manage Library, cloud access, or electricity price update.</li>
+              <li>Any write permission unless your Bambuddy build bundles read and write together.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <p class="eyebrow">QR links</p>
+          <h2>Make Bambuddy edit links reachable</h2>
+          <p>
+            The exported QR code points to <code>{external_url || BAMBUDDY_URL}/inventory?spool={spoolId}</code>. If you
+            scan labels from a phone or tablet, make sure Bambuddy's external URL is reachable from that device, or set
+            <code>BAMBUDDY_URL</code> to a reachable URL.
+          </p>
+        </div>
+        <div class="setup-actions">
+          <a class="primary-link" href="./#template">Copy the preferred template</a>
+          <a class="secondary-link" href="https://github.com/maziggy/bambuddy" target="_blank" rel="noreferrer">Bambuddy GitHub</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Buddy Labels is AGPL-3.0-only.</span>
+      <span>Current Version: v1.0.0</span>
+    </footer>
+    <script src="./assets/site.js"></script>
+  </body>
+</html>
