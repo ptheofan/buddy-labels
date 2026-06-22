@@ -81,9 +81,26 @@ nav a {
   text-decoration: none;
 }
 
+nav .live-app-link {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--ink);
+  padding: 0 12px;
+  background: var(--ink);
+  color: white;
+  font-weight: 800;
+}
+
 nav a:hover,
 nav a[aria-current="page"] {
   color: var(--ink);
+}
+
+nav .live-app-link:hover {
+  color: white;
+  background: var(--green-dark);
+  border-color: var(--green-dark);
 }
 
 main {
