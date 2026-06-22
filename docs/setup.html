@@ -36,31 +36,13 @@
 
       <section class="section">
         <div class="section-heading">
-          <p class="eyebrow">Docker Compose</p>
-          <h2>Minimal service example</h2>
+          <p class="eyebrow">Agent-ready prompt</p>
+          <h2>Agentic Setup Instructions</h2>
           <p>
-            Use the released GHCR image, point <code>BAMBUDDY_URL</code> at your Bambuddy base URL, then open
-            <code>http://localhost:8787</code>.
+            Copy a focused prompt for an AI agent that needs to add Buddy Labels to an existing self-hosted Docker setup.
           </p>
         </div>
-        <pre class="code-block"><code>services:
-  buddy-labels:
-    image: ghcr.io/ptheofan/buddy-labels:latest
-    container_name: buddy-labels
-    restart: unless-stopped
-    ports:
-      - "8787:8787"
-    environment:
-      BAMBUDDY_URL: "https://your-bambuddy.example.com"
-      BAMBUDDY_API_KEY: "bb_your_bambuddy_api_key"
-      APP_GITHUB_REPOSITORY: "ptheofan/buddy-labels"
-      PORT: "8787"</code></pre>
-        <div class="guide-note">
-          <strong>Network note:</strong>
-          use <code>http://bambuddy:8000</code> if Bambuddy is another service on the same Compose network. Use
-          <code>http://host.docker.internal:8000</code> if Bambuddy runs directly on the Docker host.
-        </div>
-        <div class="copy-strip">
+        <div class="copy-strip agent-copy-strip">
           <button
             type="button"
             data-copy-target="agent-instructions"
@@ -112,6 +94,34 @@ Validation:
 - Confirm inventory loads.
 - Export one SVG and verify the QR target resolves to {external_url || BAMBUDDY_URL}/inventory?spool={spoolId}.
         </textarea>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Docker Compose</p>
+          <h2>Minimal service example</h2>
+          <p>
+            Use the released GHCR image, point <code>BAMBUDDY_URL</code> at your Bambuddy base URL, then open
+            <code>http://localhost:8787</code>.
+          </p>
+        </div>
+        <pre class="code-block"><code>services:
+  buddy-labels:
+    image: ghcr.io/ptheofan/buddy-labels:latest
+    container_name: buddy-labels
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      BAMBUDDY_URL: "https://your-bambuddy.example.com"
+      BAMBUDDY_API_KEY: "bb_your_bambuddy_api_key"
+      APP_GITHUB_REPOSITORY: "ptheofan/buddy-labels"
+      PORT: "8787"</code></pre>
+        <div class="guide-note">
+          <strong>Network note:</strong>
+          use <code>http://bambuddy:8000</code> if Bambuddy is another service on the same Compose network. Use
+          <code>http://host.docker.internal:8000</code> if Bambuddy runs directly on the Docker host.
+        </div>
       </section>
 
       <section class="section">

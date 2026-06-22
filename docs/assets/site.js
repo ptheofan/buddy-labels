@@ -33,7 +33,7 @@ copyButtons.forEach((button) => {
     if (!text) return;
     const status = statusForButton(button);
     const success = button.getAttribute('data-copy-success') || 'Copied.';
-    const error = button.getAttribute('data-copy-error') || 'Copy failed. Select the text manually.';
+    const error = button.getAttribute('data-copy-error') || 'Clipboard blocked by browser.';
 
     try {
       await navigator.clipboard.writeText(text);
