@@ -265,8 +265,7 @@ button {
 }
 
 .download-band,
-.code-panel,
-.reference-grid a {
+.code-panel {
   border: 1px solid var(--line);
   background: var(--paper);
 }
@@ -408,26 +407,51 @@ code {
   color: var(--ink);
 }
 
-.reference-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+.reference-list {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
-.reference-grid a {
-  min-height: 120px;
+.reference-link {
   display: grid;
-  align-content: center;
-  gap: 6px;
-  padding: 20px;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto) 28px;
+  gap: 24px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
   text-decoration: none;
 }
 
-.reference-grid a:hover {
-  border-color: var(--green);
+.reference-link:last-child {
+  border-bottom: 0;
 }
 
-.reference-grid span {
+.reference-link::after {
+  content: "->";
+  color: var(--green-dark);
+  font-size: 16px;
+  font-weight: 900;
+  justify-self: end;
+}
+
+.reference-link:hover strong,
+.reference-link:hover .reference-url {
+  color: var(--green-dark);
+}
+
+.reference-copy {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+}
+
+.reference-copy strong {
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.reference-label {
   color: var(--green-dark);
   font-size: 12px;
   font-weight: 800;
@@ -435,8 +459,11 @@ code {
   text-transform: uppercase;
 }
 
-.reference-grid strong {
-  font-size: 18px;
+.reference-url {
+  color: var(--muted);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .site-footer {
@@ -459,9 +486,23 @@ code {
   .header-inner,
   .download-band,
   .hero,
-  .reference-grid,
   .permission-grid {
     grid-template-columns: 1fr;
+  }
+
+  .reference-link {
+    grid-template-columns: 1fr 24px;
+    gap: 8px 16px;
+  }
+
+  .reference-url {
+    grid-column: 1;
+    white-space: normal;
+  }
+
+  .reference-link::after {
+    grid-column: 2;
+    grid-row: 1 / span 2;
   }
 
   .env-list div {
