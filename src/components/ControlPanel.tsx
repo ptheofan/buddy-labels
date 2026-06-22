@@ -5,6 +5,7 @@ import {
   Download,
   FileImage,
   FileText,
+  KeyRound,
   MousePointer2,
   Pencil,
   RefreshCw,
@@ -30,6 +31,8 @@ import { elementDisplayName } from '../lib/templateLayout';
 
 interface ControlPanelProps {
   config: BambuddyConfig | null;
+  connectedToInventory: boolean;
+  onOpenConnection: () => void;
   label: NormalizedLabel;
   template: LabelTemplate;
   savedTemplates: SavedLabelTemplate[];
@@ -130,6 +133,8 @@ function isStyledTextElement(element: LabelTemplateElement): element is LabelTem
 
 export function ControlPanel({
   config,
+  connectedToInventory,
+  onOpenConnection,
   label,
   template,
   savedTemplates,
@@ -213,15 +218,22 @@ export function ControlPanel({
       </div>
 
       <div className="status-panel">
-        <span className={`status-dot ${config?.connected ? 'online' : 'offline'}`} />
+        <span className={`status-dot ${connectedToInventory ? 'online' : 'offline'}`} />
         <div>
-          <strong>{config?.connected ? 'Bambuddy connected' : 'Sample mode'}</strong>
-          <small>{config?.qrBaseUrl || 'Set .env for Bambuddy'}</small>
+          <strong>{connectedToInventory ? `Bambuddy ${config?.mode === 'direct' ? 'direct' : 'proxy'}` : 'Sample mode'}</strong>
+          <small>
+            {config?.qrBaseUrl ||
+              (config?.mode === 'direct' ? 'Direct connection needs attention' : 'Connect directly or run the Docker proxy')}
+          </small>
         </div>
         <button className="icon-button" type="button" onClick={onRefresh} aria-label="Refresh inventory">
           <RefreshCw size={16} className={loading ? 'spin' : ''} />
         </button>
       </div>
+      <button className="connection-settings-button" type="button" onClick={onOpenConnection}>
+        <KeyRound size={15} />
+        Bambuddy connection
+      </button>
 
       <div className="control-group">
         <label>

@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy static docs
+    name: Deploy docs and web app
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -27,16 +27,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build app
+        run: pnpm run build
 
       - name: Prepare site
         run: |
           mkdir -p pages-dist
           cp -R docs/. pages-dist/
           cp buddy-labels.3mf pages-dist/buddy-labels.3mf
+          mkdir -p pages-dist/app
+          cp -R dist/. pages-dist/app/
+          cp dist/index.html pages-dist/app/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

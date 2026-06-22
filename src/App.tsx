@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { AlertCircle, CheckCircle2, Printer } from 'lucide-react';
+import { BambuddyConnectionDialog, type BambuddyConnectionDraft } from './components/BambuddyConnectionDialog';
 import { ControlPanel } from './components/ControlPanel';
 import { InventorySidebar } from './components/InventorySidebar';
 import { TemplateCanvas } from './components/TemplateCanvas';
 import { sampleSpools } from './data/sampleSpools';
-import { fetchConfig, fetchSpools } from './lib/api';
+import { fetchConfig, fetchSpools, proxyConnection } from './lib/api';
+import {
+  createDirectConnection,
+  forgetStoredBambuddyConnection,
+  loadStoredBambuddyConnection,
+  saveStoredBambuddyConnection,
+} from './lib/bambuddyConnection';
 import { downloadPng, downloadSvg } from './lib/export';
 import { normalizeLabel } from './lib/label';
 import {
@@ -20,7 +27,16 @@ import {
   updateSavedTemplate,
 } from './lib/templates';
 import { CURRENT_APP_VERSION, fetchLatestReleaseInfo, isNewerVersion, resolveVersionRepository } from './lib/version';
-import type { BambuddyConfig, InventorySource, InventorySpool, LabelTemplate, LabelTemplateStore, QrMatrix } from './types';
+import type {
+  BambuddyApiConnection,
+  BambuddyConfig,
+  BambuddyDirectConnection,
+  InventorySource,
+  InventorySpool,
+  LabelTemplate,
+  LabelTemplateStore,
+  QrMatrix,
+} from './types';
 import type { LatestReleaseInfo } from './lib/version';
 import './styles.css';
 
@@ -130,6 +146,10 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [usingSampleData, setUsingSampleData] = useState(true);
+  const [browserConnection, setBrowserConnection] = useState<BambuddyDirectConnection | null>(loadStoredBambuddyConnection);
+  const [connectionDialogOpen, setConnectionDialogOpen] = useState(false);
+  const [connectionBusy, setConnectionBusy] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState('');
   const [templateState, setTemplateState] = useState<TemplateState>(initialTemplateState);
   const [designMode, setDesignMode] = useState(false);
   const [selectedElementId, setSelectedElementId] = useState(templateState.template.elements[0]?.id || 'brand');
@@ -144,33 +164,50 @@ export default function App() {
   );
 
   const { store: templateStore, activeTemplateId, template, dirty: templateDirty, importedDraft } = templateState;
+  const activeConnection = useMemo<BambuddyApiConnection>(
+    () => browserConnection || proxyConnection,
+    [browserConnection],
+  );
 
-  const refresh = useCallback(async () => {
+  const loadInventory = useCallback(async (connection: BambuddyApiConnection): Promise<boolean> => {
     setLoading(true);
     setError('');
+    let configLoaded = false;
     try {
-      const nextConfig = await fetchConfig();
+      const nextConfig = await fetchConfig(connection);
+      configLoaded = true;
       setConfig(nextConfig);
       if (!nextConfig.configured) {
-        throw new Error('BAMBUDDY_URL is not configured; using sample spools');
+        throw new Error(
+          connection.mode === 'direct'
+            ? 'Direct Bambuddy URL or API key is missing; using sample spools'
+            : 'BAMBUDDY_URL is not configured; using sample spools',
+        );
       }
-      const nextSpools = await fetchSpools(source);
+      const nextSpools = await fetchSpools(source, connection);
       if (!nextSpools.length) {
         throw new Error('Bambuddy returned no spools');
       }
       setSpools(nextSpools);
       setUsingSampleData(false);
       setSelectedId((current) => (nextSpools.some((spool) => spool.id === current) ? current : nextSpools[0].id));
+      return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setError(message);
+      if (!configLoaded) setConfig(null);
       setSpools(sampleSpools);
       setUsingSampleData(true);
       setSelectedId(sampleSpools[0].id);
+      return false;
     } finally {
       setLoading(false);
     }
   }, [source]);
+
+  const refresh = useCallback(async () => {
+    await loadInventory(activeConnection);
+  }, [activeConnection, loadInventory]);
 
   useEffect(() => {
     void refresh();
@@ -223,6 +260,14 @@ export default function App() {
     [spools, selectedId],
   );
 
+  const connectedToInventory = Boolean(config?.configured && !usingSampleData);
+  const connectionPillLabel = connectedToInventory
+    ? config?.mode === 'direct'
+      ? 'Bambuddy direct'
+      : 'Bambuddy connected'
+    : browserConnection
+      ? 'Bambuddy direct failed'
+      : 'Connect Bambuddy';
   const qrBaseUrl = config?.qrBaseUrl || config?.baseUrl || 'http://bambuddy.local';
   const label = useMemo(() => normalizeLabel(selectedSpool, template.settings, qrBaseUrl), [selectedSpool, template.settings, qrBaseUrl]);
   const qrMatrix = useMemo(() => createQrMatrix(label.qrUrl), [label.qrUrl]);
@@ -436,6 +481,46 @@ export default function App() {
     void downloadPng(svgRef.current, label, template.settings);
   };
 
+  const handleConnectBambuddy = useCallback(
+    (draft: BambuddyConnectionDraft) => {
+      let nextConnection = createDirectConnection(draft.baseUrl, draft.apiKey, false);
+      setConnectionBusy(true);
+      setConnectionStatus('Testing Bambuddy inventory access...');
+      if (draft.saveInBrowser) {
+        try {
+          nextConnection = createDirectConnection(draft.baseUrl, draft.apiKey, true);
+          saveStoredBambuddyConnection(nextConnection);
+        } catch {
+          setConnectionStatus('Browser storage is blocked; using this connection for the current session only.');
+          nextConnection = createDirectConnection(draft.baseUrl, draft.apiKey, false);
+        }
+      } else {
+        forgetStoredBambuddyConnection();
+      }
+
+      setBrowserConnection(nextConnection);
+      void loadInventory(nextConnection)
+        .then((ok) => {
+          if (ok) {
+            setConnectionStatus('');
+            setConnectionDialogOpen(false);
+            return;
+          }
+          setConnectionStatus('Could not load inventory. Check the URL, token permissions, CORS, and HTTPS settings.');
+        })
+        .finally(() => setConnectionBusy(false));
+    },
+    [loadInventory],
+  );
+
+  const handleDisconnectBambuddy = useCallback(() => {
+    forgetStoredBambuddyConnection();
+    setBrowserConnection(null);
+    setConnectionStatus('');
+    setConnectionDialogOpen(false);
+    void loadInventory(proxyConnection);
+  }, [loadInventory]);
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -459,10 +544,18 @@ export default function App() {
               {versionCheck.status === 'checking' ? ' checking' : ''}
             </span>
           )}
-          <div className="connection-pill">
-            {config?.connected ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-            <span>{config?.connected ? 'Bambuddy connected' : 'Configure Bambuddy proxy'}</span>
-          </div>
+          <button
+            className={`connection-pill ${connectedToInventory ? 'online' : 'offline'}`}
+            type="button"
+            onClick={() => {
+              setConnectionStatus('');
+              setConnectionDialogOpen(true);
+            }}
+            title={error || config?.settingsError || 'Configure Bambuddy connection'}
+          >
+            {connectedToInventory ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+            <span>{connectionPillLabel}</span>
+          </button>
         </div>
       </header>
 
@@ -512,6 +605,11 @@ export default function App() {
 
         <ControlPanel
           config={config}
+          connectedToInventory={connectedToInventory}
+          onOpenConnection={() => {
+            setConnectionStatus('');
+            setConnectionDialogOpen(true);
+          }}
           label={label}
           template={template}
           savedTemplates={templateStore.templates}
@@ -550,6 +648,16 @@ export default function App() {
           onDownloadPng={handleDownloadPng}
         />
       </main>
+      <BambuddyConnectionDialog
+        open={connectionDialogOpen}
+        currentConnection={browserConnection}
+        config={config}
+        busy={connectionBusy || loading}
+        status={connectionStatus}
+        onClose={() => setConnectionDialogOpen(false)}
+        onConnect={handleConnectBambuddy}
+        onDisconnect={handleDisconnectBambuddy}
+      />
     </div>
   );
 }

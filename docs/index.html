@@ -18,6 +18,7 @@
           <span>Buddy Labels</span>
         </a>
         <nav aria-label="Page navigation">
+          <a href="./app/">Open App</a>
           <a href="https://github.com/ptheofan/buddy-labels" target="_blank" rel="noreferrer">GitHub</a>
           <a href="./setup.html">Setup Guide</a>
         </nav>
@@ -37,7 +38,8 @@
             Studio compatibility.
           </p>
           <div class="hero-actions">
-            <a class="primary-link" href="#template">Use the preferred template</a>
+            <a class="primary-link" href="./app/">Open the web app</a>
+            <a class="secondary-link" href="#template">Use the preferred template</a>
             <a class="secondary-link" href="./buddy-labels.3mf" download>Download the 3MF</a>
           </div>
         </div>
@@ -125,8 +127,9 @@
         <ol class="steps">
           <li>
             <strong>Run the app.</strong>
-            Use <code>ghcr.io/ptheofan/buddy-labels:latest</code>, build the Docker image locally, or run
-            <code>pnpm run dev</code>, then configure <code>BAMBUDDY_URL</code> and a read-only Bambuddy API key.
+            Open the hosted app in your browser, use <code>ghcr.io/ptheofan/buddy-labels:latest</code>, build the Docker
+            image locally, or run <code>pnpm run dev</code>. Browser-hosted mode needs Bambuddy CORS access; Docker mode
+            uses the built-in proxy.
           </li>
           <li>
             <strong>Import the template.</strong>

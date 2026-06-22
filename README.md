@@ -4,7 +4,7 @@ React app for generating UV-printable Bambuddy spool labels for a 75 mm x 53.5 m
 
 SVG is the primary export format for EufyMake transfer. The exported SVG uses physical `mm` dimensions and a vector QR code, with no embedded raster image.
 
-Static GitHub Pages documentation lives in `docs/`. The Pages workflow publishes the docs and bundles `buddy-labels.3mf` as a downloadable model file.
+Static GitHub Pages documentation lives in `docs/`. The Pages workflow publishes the docs at the site root, the runnable SPA under `/app/`, and bundles `buddy-labels.3mf` as a downloadable model file.
 
 Current application version: `1.0.0`.
 
@@ -31,6 +31,12 @@ pnpm run dev
 The app runs at `http://localhost:5173` and the proxy runs at `http://localhost:8787`.
 
 Restart `pnpm run dev` after changing `.env`; the proxy loads `.env` when it starts.
+
+## Browser-hosted mode
+
+The GitHub Pages app can connect directly to Bambuddy from the browser. Click the Bambuddy connection button, enter the Bambuddy URL and API key, and optionally enable `Save in browser`.
+
+Direct browser mode requires Bambuddy to allow CORS requests from the hosted app origin. Saving credentials stores the API key in localStorage; leave it unchecked to keep the token in memory only until refresh.
 
 ## Docker
 

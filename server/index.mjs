@@ -144,6 +144,7 @@ app.get('/api/config', async (_req, res) => {
     settingsError,
     appVersion,
     githubRepository: appGithubRepository(),
+    mode: 'proxy',
   });
 });
 

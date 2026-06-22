@@ -31,6 +31,7 @@ const defaultGithubRepository = normalizeGithubRepository(
 );
 
 export default defineConfig({
+  base: process.env.VITE_BASE || './',
   plugins: [react()],
   define: {
     __APP_VERSION__: JSON.stringify(packageJson.version),

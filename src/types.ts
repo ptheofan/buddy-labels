@@ -69,7 +69,22 @@ export interface BambuddyConfig {
   settingsError: string;
   appVersion: string;
   githubRepository: string;
+  mode: 'proxy' | 'direct';
+  savedInBrowser?: boolean;
 }
+
+export interface BambuddyProxyConnection {
+  mode: 'proxy';
+}
+
+export interface BambuddyDirectConnection {
+  mode: 'direct';
+  baseUrl: string;
+  apiKey: string;
+  savedInBrowser: boolean;
+}
+
+export type BambuddyApiConnection = BambuddyProxyConnection | BambuddyDirectConnection;
 
 export interface LabelSettings {
   widthMm: number;
