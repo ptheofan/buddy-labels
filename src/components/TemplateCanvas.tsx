@@ -218,9 +218,9 @@ export function TemplateCanvas({
               <button
                 key={element.id}
                 type="button"
-                className={`editor-box ${selectedElementId === element.id ? 'selected' : ''} ${warning ? 'warning' : ''} ${
-                  element.visible ? '' : 'hidden-element'
-                }`}
+                className={`editor-box ${selectedElementId === element.id ? 'selected' : ''} ${
+                  dragState?.elementId === element.id ? 'dragging' : ''
+                } ${warning ? 'warning' : ''} ${element.visible ? '' : 'hidden-element'}`}
                 style={{
                   left: `${(element.xMm / template.settings.widthMm) * 100}%`,
                   top: `${(element.yMm / template.settings.heightMm) * 100}%`,

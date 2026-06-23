@@ -190,6 +190,18 @@ h1 {
   overflow: hidden;
 }
 
+.canvas-toolbar {
+  grid-row: 1;
+}
+
+.inline-alert {
+  grid-row: 2;
+}
+
+.label-stage {
+  grid-row: 3;
+}
+
 .sidebar-header,
 .canvas-toolbar {
   display: flex;
@@ -407,6 +419,7 @@ input:focus {
 .editor-overlay {
   position: absolute;
   inset: 0;
+  z-index: 2;
   outline: none;
 }
 
@@ -419,13 +432,19 @@ input:focus {
   color: #17201d;
   appearance: none;
   touch-action: none;
+  z-index: 1;
 }
 
-.editor-box:hover,
-.editor-box.selected {
+.editor-box:hover {
+  z-index: 5;
+}
+
+.editor-box.selected,
+.editor-box.dragging {
   border-style: solid;
   border-color: var(--green);
   background: rgba(47, 143, 104, 0.15);
+  z-index: 20;
 }
 
 .editor-box.warning {
@@ -452,6 +471,7 @@ input:focus {
   font-size: 9px;
   line-height: 1.1;
   pointer-events: none;
+  z-index: 1;
 }
 
 .resize-handle {
@@ -462,6 +482,7 @@ input:focus {
   background: var(--green);
   box-shadow: 0 1px 3px rgba(22, 31, 29, 0.24);
   touch-action: none;
+  z-index: 30;
 }
 
 .resize-handle-nw {
