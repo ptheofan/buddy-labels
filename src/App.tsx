@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'qrcode';
-import { AlertCircle, CheckCircle2, Printer } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ExternalLink, Printer } from 'lucide-react';
 import { BambuddyConnectionDialog, type BambuddyConnectionDraft } from './components/BambuddyConnectionDialog';
 import { ControlPanel } from './components/ControlPanel';
 import { InventorySidebar } from './components/InventorySidebar';
@@ -134,6 +134,12 @@ function createQrMatrix(value: string): QrMatrix | null {
   } catch {
     return null;
   }
+}
+
+function githubPagesUrl(repository: string): string {
+  const [owner, repo] = repository.split('/');
+  if (!owner || !repo) return 'https://ptheofan.github.io/buddy-labels/';
+  return `https://${owner}.github.io/${repo}/`;
 }
 
 export default function App() {
@@ -282,6 +288,7 @@ export default function App() {
     if (versionCheck.status === 'error') return `${versionCheck.message} (${versionCheck.repository})`;
     return 'GitHub repository is not configured for release checks';
   }, [versionCheck]);
+  const docsUrl = useMemo(() => githubPagesUrl(resolveVersionRepository(config?.githubRepository)), [config?.githubRepository]);
 
   const handleTemplateChange = useCallback((nextTemplate: LabelTemplate) => {
     setTemplateState((current) => ({
@@ -556,6 +563,10 @@ export default function App() {
             {connectedToInventory ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
             <span>{connectionPillLabel}</span>
           </button>
+          <a className="docs-pill" href={docsUrl} target="_blank" rel="noreferrer" title="Open Buddy Labels GitHub Pages">
+            <ExternalLink size={14} />
+            <span>GitHub Pages</span>
+          </a>
         </div>
       </header>
 

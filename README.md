@@ -6,7 +6,7 @@ SVG is the primary export format for EufyMake transfer. The exported SVG uses ph
 
 Static GitHub Pages documentation lives in `docs/`. The Pages workflow publishes the docs at the site root, the runnable SPA under `/app/`, and bundles `buddy-labels.3mf` as a downloadable model file.
 
-Current application version: `1.0.2`.
+Current application version: `1.0.3`.
 
 When Bambuddy returns `created_at` for a spool, the label can include a `Registered` line formatted as `dd/mm/YYYY (dd MMM YYYY)`. Spools without that timestamp omit the row.
 
@@ -62,7 +62,7 @@ Published release images are pushed to GitHub Container Registry:
 
 ```sh
 docker pull ghcr.io/ptheofan/buddy-labels:latest
-docker pull ghcr.io/ptheofan/buddy-labels:1.0.2
+docker pull ghcr.io/ptheofan/buddy-labels:1.0.3
 ```
 
 ## Releases
