@@ -261,13 +261,24 @@ function normalizeSavedTemplate(value: unknown): SavedLabelTemplate | null {
   if (!isRecord(value)) return null;
   const id = typeof value.id === 'string' && value.id ? value.id : idFromCrypto();
   const now = isoNow();
-  return {
+  const savedTemplate = {
     id,
     name: typeof value.name === 'string' && value.name.trim() ? value.name.trim() : 'Untitled template',
     createdAt: typeof value.createdAt === 'string' ? value.createdAt : now,
     updatedAt: typeof value.updatedAt === 'string' ? value.updatedAt : now,
     template: normalizeTemplate(value.template),
   };
+  if (
+    savedTemplate.id === defaultTemplateId &&
+    savedTemplate.name === 'Bambu-style default' &&
+    savedTemplate.createdAt === savedTemplate.updatedAt
+  ) {
+    return {
+      ...savedTemplate,
+      template: createDefaultTemplate(),
+    };
+  }
+  return savedTemplate;
 }
 
 export function loadTemplateStore(): LabelTemplateStore {
